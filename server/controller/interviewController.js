@@ -6,10 +6,29 @@ const customPrompt = require("../../ai_engine/prompts/customInterviewPrompt");
 const extractTextFromPdf = require("../../ai_engine/services/resume_parse");
 const model = require("../src/config/gemini");
 const resumePrompt = require("../../ai_engine/prompts/resumeQuestionprompt");
+
+const extractJson = (text) => {
+  const cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+  const start = cleaned.indexOf("{");
+  const end = cleaned.lastIndexOf("}");
+
+  if (start === -1 || end === -1) {
+    throw new Error("Invalid AI JSON format");
+  }
+
+  return JSON.parse(cleaned.substring(start, end + 1));
+};
+
+const ownsSession = (session, userId) => session.userId.toString() === userId;
+
 exports.startInterview = async (req, res) => {
   try {
     const { role, difficulty } = req.body;
     const userId = req.user.id;
+
+    if (!role || !difficulty) {
+      return res.status(400).json({ message: "Role and difficulty are required" });
+    }
 
     const aiQuestions = await generateQuestion({ role, difficulty });
 
@@ -47,6 +66,10 @@ exports.getInterview = async (req, res) => {
       return res.status(404).json({ message: "Interview session not found" });
     }
 
+    if (!ownsSession(session, req.user.id)) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
     res.json({
       session,
       questions: session.questions,
@@ -65,6 +88,14 @@ exports.submitAnswer = async (req, res) => {
     const session = await InterviewSession.findById(sessionId);
     if (!session) {
       return res.status(404).json({ message: "Session not found" });
+    }
+
+    if (!ownsSession(session, req.user.id)) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    if (!Number.isInteger(questionIndex) || !answerText?.trim()) {
+      return res.status(400).json({ message: "Question index and answer are required" });
     }
 
     const question = session.questions[questionIndex];
@@ -99,9 +130,18 @@ exports.submitAnswer = async (req, res) => {
 };
 exports.completeInterview = async (req, res) => {
   try {
-    await InterviewSession.findByIdAndUpdate(req.params.id, {
-      status: "completed",
-    });
+    const session = await InterviewSession.findById(req.params.id);
+
+    if (!session) {
+      return res.status(404).json({ message: "Interview session not found" });
+    }
+
+    if (!ownsSession(session, req.user.id)) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    session.status = "completed";
+    await session.save();
 
     res.json({ message: "Interview completed" });
   } catch (error) {
@@ -136,8 +176,7 @@ exports.startResumeInterview = async (req, res) => {
     const prompt = resumePrompt({ resumeText });
 
     const result = await model.generateContent(prompt);
-    const rawText = result.response.candidates[0].content.parts[0].text;
-
+    const rawText = result.response.text();
     const data = extractJson(rawText);
 
     if (!Array.isArray(data.questions) || data.questions.length === 0) {
@@ -173,34 +212,28 @@ exports.startCustomInterview = async (req, res) => {
     const { domain, topics, questionCount, difficulty, instructions } =
       req.body;
 
-    if (!domain || !topics || !questionCount) {
+    const parsedQuestionCount = Number(questionCount);
+
+    if (
+      !domain ||
+      !topics ||
+      !Number.isInteger(parsedQuestionCount) ||
+      parsedQuestionCount < 1 ||
+      parsedQuestionCount > 20
+    ) {
       return res.status(400).json({ message: "Invalid input" });
     }
 
     const prompt = customPrompt({
       domain,
       topics,
-      questionCount,
+      questionCount: parsedQuestionCount,
       difficulty,
       instructions,
     });
 
     const result = await model.generateContent(prompt);
-    const text = result.response.candidates[0].content.parts[0].text;
-    let jsonText = text
-      .replace(/```json/gi, "")
-      .replace(/```/g, "")
-      .trim();
-    const start = jsonText.indexOf("{");
-    const end = jsonText.lastIndexOf("}");
-
-    if (start === -1 || end === -1) {
-      throw new Error("Invalid AI JSON format");
-    }
-
-    jsonText = jsonText.substring(start, end + 1);
-
-    const data = JSON.parse(jsonText);
+    const data = extractJson(result.response.text());
 
     if (!Array.isArray(data.questions) || data.questions.length === 0) {
       return res
@@ -217,7 +250,7 @@ exports.startCustomInterview = async (req, res) => {
       userId,
       role: domain,
       topics,
-      questionCount,
+      questionCount: parsedQuestionCount,
       difficulty,
       instructions,
       questions,

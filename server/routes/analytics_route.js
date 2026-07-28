@@ -5,6 +5,7 @@ const analyticalContoller = require("../controller/anaytics_controller");
 
 route.get("/overview", auth, analyticalContoller.getOverview);
 route.get("/score-trend", auth, analyticalContoller.getScoreTrend);
+route.get("/session-insights", auth, analyticalContoller.getSessionInsights);
 route.get(
   "/weakness-breakdown",
   auth,
@@ -12,6 +13,11 @@ route.get(
 );
 route.get(
   "/strenght-breakdown",
+  auth,
+  analyticalContoller.getStrengthBreakdown
+);
+route.get(
+  "/strength-breakdown",
   auth,
   analyticalContoller.getStrengthBreakdown
 );

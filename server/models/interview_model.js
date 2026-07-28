@@ -30,6 +30,11 @@ const interviewSessionSchema = new mongoose.Schema(
     questionCount: Number,
     difficulty: String,
     instructions: String,
+    status: {
+      type: String,
+      enum: ["in-progress", "completed"],
+      default: "in-progress",
+    },
 
     questions: {
       type: [questionSchema],

@@ -131,3 +131,71 @@ exports.getStrengthBreakdown = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch strength breakdown" });
   }
 };
+
+exports.getSessionInsights = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const sessions = await interviewSession
+      .find({ userId })
+      .select("_id role difficulty status createdAt")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const sessionIds = sessions.map((session) => session._id);
+    const evaluations = await AnswerEvaluation.find({
+      sessionId: { $in: sessionIds },
+    })
+      .select("sessionId questionIndex score strengths weaknesses createdAt")
+      .sort({ questionIndex: 1 })
+      .lean();
+
+    const evaluationsBySession = evaluations.reduce((acc, evaluation) => {
+      const key = evaluation.sessionId.toString();
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(evaluation);
+      return acc;
+    }, {});
+
+    const countItems = (items) =>
+      Object.entries(
+        items.reduce((acc, item) => {
+          if (!item) return acc;
+          acc[item] = (acc[item] || 0) + 1;
+          return acc;
+        }, {})
+      )
+        .map(([label, count]) => ({ label, count }))
+        .sort((a, b) => b.count - a.count);
+
+    const insights = sessions.map((session) => {
+      const sessionEvaluations = evaluationsBySession[session._id.toString()] || [];
+      const scores = sessionEvaluations.map((evaluation) => evaluation.score || 0);
+      const averageScore =
+        scores.length > 0
+          ? scores.reduce((sum, score) => sum + score, 0) / scores.length
+          : 0;
+
+      return {
+        sessionId: session._id,
+        role: session.role,
+        difficulty: session.difficulty || "Mixed",
+        status: session.status,
+        createdAt: session.createdAt,
+        answeredQuestions: sessionEvaluations.length,
+        averageScore,
+        strengths: countItems(
+          sessionEvaluations.flatMap((evaluation) => evaluation.strengths || [])
+        ),
+        weaknesses: countItems(
+          sessionEvaluations.flatMap((evaluation) => evaluation.weaknesses || [])
+        ),
+      };
+    });
+
+    res.json({ insights });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch session insights" });
+  }
+};

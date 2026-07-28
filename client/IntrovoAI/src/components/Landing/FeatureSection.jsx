@@ -1,34 +1,48 @@
 const features = [
   {
-    title: "AI-Generated Interviews",
-    desc: "Dynamic questions based on role and difficulty.",
+    title: "AI-generated interviews",
+    desc: "Generate targeted questions from role, difficulty, resume, or custom topics.",
   },
   {
-    title: "Smart Answer Evaluation",
-    desc: "AI evaluates clarity, accuracy, and depth.",
+    title: "Answer evaluation",
+    desc: "Receive score, strengths, weak areas, and improved answer guidance.",
   },
   {
-    title: "Personalized Roadmap",
-    desc: "Get a custom learning plan based on weaknesses.",
+    title: "Performance analytics",
+    desc: "Track score trend, repeated weaknesses, and confident strengths.",
   },
   {
-    title: "Performance Analytics",
-    desc: "Track improvement across interviews.",
+    title: "Personalized roadmap",
+    desc: "Turn interview feedback into a focused four-week learning plan.",
   },
 ];
 
 const FeatureSection = () => {
   return (
-    <section className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl font-bold text-center">Why IntervoAI?</h2>
+    <section className="bg-white px-5 py-16 sm:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
+            Product features
+          </p>
+          <h2 className="mt-2 text-3xl font-bold tracking-normal text-slate-950">
+            Built for placement preparation
+          </h2>
+        </div>
 
-        <div className="grid md:grid-cols-4 gap-6 mt-10">
-          {features.map((f, i) => (
-            <div key={i} className="bg-gray-50 p-6 rounded shadow">
-              <h3 className="font-semibold text-lg">{f.title}</h3>
-              <p className="text-gray-600 mt-2">{f.desc}</p>
-            </div>
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {features.map((feature) => (
+            <article
+              key={feature.title}
+              className="rounded-lg border border-slate-200 bg-slate-50 p-5"
+            >
+              <h3 className="text-lg font-bold text-slate-950">
+                {feature.title}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                {feature.desc}
+              </p>
+            </article>
           ))}
         </div>
       </div>

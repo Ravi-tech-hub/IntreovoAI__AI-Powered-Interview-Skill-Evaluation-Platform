@@ -10,41 +10,56 @@ const Interview = () => {
 
   if (!questions.length) {
     return (
-      <div className="max-w-3xl mx-auto p-6 space-y-8">
-        <ResumeInterview />
+      <div className="space-y-6 p-5 sm:p-8">
+        <header className="max-w-4xl">
+          <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
+            Practice workspace
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">
+            Build your mock interview
+          </h1>
+          <p className="mt-2 text-slate-600">
+            Choose a fast role-based session, upload a resume, or customize the
+            exact domain and topics you want to practice.
+          </p>
+        </header>
 
-        <div className="flex items-center gap-3">
-          <hr className="flex-1" />
-          <span className="text-gray-500 text-sm">OR</span>
-          <hr className="flex-1" />
+        <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.75fr)]">
+          <CustomInterview />
+          <div className="space-y-5">
+            <ResumeInterview />
+            <StartInterview />
+          </div>
         </div>
-
-        <CustomInterview />
-
-        <div className="flex items-center gap-3">
-          <hr className="flex-1" />
-          <span className="text-gray-500 text-sm">OR</span>
-          <hr className="flex-1" />
-        </div>
-
-        <StartInterview />
       </div>
     );
   }
 
   const question = questions[currentIndex];
+
   if (!question) {
     return (
-      <div className="text-center mt-20 text-2xl font-semibold">
-        Interview Completed 🎉
+      <div className="p-5 sm:p-8">
+        <div className="mx-auto max-w-2xl rounded-lg border border-teal-200 bg-teal-50 p-8 text-center shadow-sm">
+          <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
+            Interview completed
+          </p>
+          <h1 className="mt-2 text-3xl font-bold text-slate-950">
+            Great work. Review your dashboard for trends and roadmap actions.
+          </h1>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-4">
-      <QuestionCard question={question} index={currentIndex} />
-      <AnswerBox questionIndex={currentIndex} />
+    <div className="space-y-5 p-5 sm:p-8">
+      <QuestionCard
+        question={question}
+        index={currentIndex}
+        total={questions.length}
+      />
+      <AnswerBox questionIndex={currentIndex} totalQuestions={questions.length} />
     </div>
   );
 };

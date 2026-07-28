@@ -11,6 +11,11 @@ exports.createRoadmap = async (req, res) => {
     if (!session) {
       return res.status(404).json({ message: "Interview session not found" });
     }
+
+    if (session.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
     const evaluation = await answerEvaluation.find({ sessionId });
     const weaknesses = [...new Set(evaluation.flatMap((e) => e.weaknesses))];
 
@@ -39,5 +44,25 @@ exports.createRoadmap = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to generate roadmap" });
+  }
+};
+
+exports.getRoadmapBySession = async (req, res) => {
+  try {
+    const sessionId = req.params.sessionId;
+    const userId = req.user.id;
+
+    const roadmap = await Roadmap.findOne({ sessionId, userId }).sort({
+      createdAt: -1,
+    });
+
+    if (!roadmap) {
+      return res.status(404).json({ message: "Roadmap not found" });
+    }
+
+    res.json({ roadmap });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch roadmap" });
   }
 };

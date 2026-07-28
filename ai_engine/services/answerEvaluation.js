@@ -2,24 +2,22 @@ const model = require("../../server/src/config/gemini");
 const buildPrompt = require("../prompts/evaluationPrompt");
 
 const extractJSON = (text) => {
-  const match = text.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error("No JSON found in Gemini response");
-  return match[0];
+  const cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+  const start = cleaned.indexOf("{");
+  const end = cleaned.lastIndexOf("}");
+
+  if (start === -1 || end === -1) {
+    throw new Error("No JSON found in Gemini response");
+  }
+
+  return cleaned.substring(start, end + 1);
 };
 
 const evaluateAnswer = async ({ question, answer }) => {
   try {
     const prompt = buildPrompt({ question, answer });
-
-    // ✅ v0.24.x expects STRING prompt
     const result = await model.generateContent(prompt);
-
-    // ✅ THIS WORKS in v0.24.x
-    const responseText = result.response.text();
-
-    console.log("Gemini Raw Response:\n", responseText);
-
-    const jsonString = extractJSON(responseText);
+    const jsonString = extractJSON(result.response.text());
     return JSON.parse(jsonString);
   } catch (error) {
     console.error("Gemini Evaluation Error:", error);

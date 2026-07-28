@@ -1,33 +1,46 @@
 import { Link } from "react-router-dom";
 
 const steps = [
-  "Choose role & difficulty",
+  "Choose interview mode",
   "Answer AI-generated questions",
-  "Get instant AI feedback",
-  "Follow your learning roadmap",
+  "Review score and feedback",
+  "Follow your roadmap",
 ];
 
 const HowItWorksSection = () => {
   return (
-    <section className="py-16 bg-gray-100">
-      <div className="max-w-4xl mx-auto px-6 text-center">
-        <h2 className="text-3xl font-bold">How It Works</h2>
-
-        <div className="mt-8 grid md:grid-cols-4 gap-6">
-          {steps.map((step, i) => (
-            <div key={i} className="bg-white p-4 rounded shadow">
-              <span className="text-blue-600 font-bold text-xl">{i + 1}</span>
-              <p className="mt-2">{step}</p>
-            </div>
-          ))}
+    <section className="bg-slate-50 px-5 py-16 sm:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
+              Workflow
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-normal text-slate-950">
+              How it works
+            </h2>
+          </div>
+          <Link
+            to="/how-it-works"
+            className="w-fit text-sm font-bold text-teal-700"
+          >
+            Learn more
+          </Link>
         </div>
 
-        <Link
-          to="/how-it-works"
-          className="inline-block mt-8 text-blue-600 font-semibold"
-        >
-          Learn More →
-        </Link>
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-4">
+          {steps.map((step, index) => (
+            <article
+              key={step}
+              className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+            >
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-950 text-sm font-bold text-white">
+                {index + 1}
+              </span>
+              <p className="mt-4 font-semibold text-slate-800">{step}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );

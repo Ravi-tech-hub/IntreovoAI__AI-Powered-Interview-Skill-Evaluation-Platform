@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+@layer base {
+  html {
+    background: #f8fafc;
+  }
+
+  body {
+    min-width: 320px;
+    color: #020617;
+    background: #f8fafc;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}

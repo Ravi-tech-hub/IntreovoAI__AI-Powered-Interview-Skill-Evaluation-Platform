@@ -1,24 +1,37 @@
 const RoadmapCard = ({ week }) => {
   return (
-    <div className="bg-gray-50 border rounded p-4">
-      <h3 className="font-bold">
-        Week {week.week}: {week.focus}
-      </h3>
+    <article className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+      <p className="text-xs font-bold uppercase tracking-wide text-teal-700">
+        Week {week.week}
+      </p>
+      <h3 className="mt-2 text-base font-bold text-slate-950">{week.focus}</h3>
 
-      <p className="mt-2 font-semibold">Topics</p>
-      <ul className="list-disc ml-5">
-        {week.topics.map((t, i) => (
-          <li key={i}>{t}</li>
-        ))}
-      </ul>
+      <div className="mt-4">
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+          Topics
+        </p>
+        <ul className="mt-2 space-y-2 text-sm text-slate-700">
+          {(week.topics || []).map((topic) => (
+            <li key={topic} className="rounded-md bg-white px-3 py-2">
+              {topic}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <p className="mt-2 font-semibold">Practice</p>
-      <ul className="list-disc ml-5">
-        {week.practice.map((p, i) => (
-          <li key={i}>{p}</li>
-        ))}
-      </ul>
-    </div>
+      <div className="mt-4">
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+          Practice
+        </p>
+        <ul className="mt-2 space-y-2 text-sm text-slate-700">
+          {(week.practice || []).map((item) => (
+            <li key={item} className="rounded-md bg-white px-3 py-2">
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </article>
   );
 };
 

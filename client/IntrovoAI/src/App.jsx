@@ -28,8 +28,15 @@ const App = () => {
       <Route
         path="*"
         element={
-          <div className="min-h-screen flex items-center justify-center">
-            <h1 className="text-2xl font-bold">404 – Page Not Found</h1>
+          <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+            <div className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">
+              <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
+                404
+              </p>
+              <h1 className="mt-2 text-2xl font-bold text-slate-950">
+                Page not found
+              </h1>
+            </div>
           </div>
         }
       />

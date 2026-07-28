@@ -3,13 +3,14 @@ import { useEffect, useRef, useState } from "react";
 const VoiceRecorder = ({ onResult }) => {
   const recognitionRef = useRef(null);
   const [listening, setListening] = useState(false);
+  const [supported, setSupported] = useState(true);
 
   useEffect(() => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert("Speech Recognition not supported in this browser");
+      setSupported(false);
       return;
     }
 
@@ -32,23 +33,35 @@ const VoiceRecorder = ({ onResult }) => {
   }, [onResult]);
 
   const startListening = () => {
-    recognitionRef.current.start();
+    recognitionRef.current?.start();
     setListening(true);
   };
 
   const stopListening = () => {
-    recognitionRef.current.stop();
+    recognitionRef.current?.stop();
     setListening(false);
   };
 
+  if (!supported) {
+    return (
+      <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+        Voice input is not supported in this browser.
+      </p>
+    );
+  }
+
   return (
     <button
+      type="button"
       onClick={listening ? stopListening : startListening}
-      className={`px-4 py-2 rounded text-white ${
-        listening ? "bg-red-500" : "bg-purple-600"
-      }`}
+      className={[
+        "min-h-11 rounded-lg px-4 text-sm font-semibold transition",
+        listening
+          ? "bg-red-600 text-white hover:bg-red-700"
+          : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
+      ].join(" ")}
     >
-      {listening ? "Stop Recording" : "🎤 Speak Answer"}
+      {listening ? "Stop voice input" : "Use voice input"}
     </button>
   );
 };
