@@ -1,4 +1,4 @@
-const gemini = require("../../server/src/config/gemini");
+const gemini = require("../../src/config/gemini");
 const buildPrompt = require("../prompts/interviewPrompt");
 
 const extractJSON = (text) => {

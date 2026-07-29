@@ -1,7 +1,7 @@
 const answerEvaluation = require("../models/answer_model");
 const InterviewSession = require("../models/interview_model");
 const Roadmap = require("../models/roadmap_model");
-const generateRoadmap = require("../../ai_engine/services/roadmapGenerator");
+const generateRoadmap = require("../ai_engine/services/roadmapGenerator");
 
 exports.createRoadmap = async (req, res) => {
   try {

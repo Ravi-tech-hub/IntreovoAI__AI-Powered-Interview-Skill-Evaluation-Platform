@@ -1,11 +1,11 @@
 const InterviewSession = require("../models/interview_model");
 const AnswerEvaluation = require("../models/answer_model");
-const generateQuestion = require("../../ai_engine/services/questionGenerator");
-const evaluateAnswer = require("../../ai_engine/services/answerEvaluation");
-const customPrompt = require("../../ai_engine/prompts/customInterviewPrompt");
-const extractTextFromPdf = require("../../ai_engine/services/resume_parse");
+const generateQuestion = require("../ai_engine/services/questionGenerator");
+const evaluateAnswer = require("../ai_engine/services/answerEvaluation");
+const customPrompt = require("../ai_engine/prompts/customInterviewPrompt");
+const extractTextFromPdf = require("../ai_engine/services/resume_parse");
 const model = require("../src/config/gemini");
-const resumePrompt = require("../../ai_engine/prompts/resumeQuestionprompt");
+const resumePrompt = require("../ai_engine/prompts/resumeQuestionprompt");
 
 const extractJson = (text) => {
   const cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
