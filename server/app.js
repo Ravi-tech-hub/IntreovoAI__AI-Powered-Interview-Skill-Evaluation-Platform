@@ -7,7 +7,9 @@ const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
 app.use(express.json({ limit: "1mb" }));
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: [allowedOrigin,
+      "https://intreovo-ai-ai-powered-interview-skill-evaluation-btutjiijw.vercel.app"
+    ],
     credentials: true,
   })
 );
