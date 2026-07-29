@@ -8,7 +8,7 @@ app.use(express.json({ limit: "1mb" }));
 app.use(
   cors({
     origin: [allowedOrigin,
-      "https://intreovo-ai-ai-powered-interview-skill-evaluation-btutjiijw.vercel.app"
+      "https://intreovo-ai-ai-powered-interview-skill-evaluation-qa9w8buo2.vercel.app/"
     ],
     credentials: true,
   })
